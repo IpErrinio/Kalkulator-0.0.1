@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    
+
     const display = document.getElementById("display");
-    const buttons = document.querySelectorAll("button");
+    const buttons = document.querySelectorAll(".number, .operator, .clear, .equal");
 
     // Zmienna przechowująca
     let currentInput = "";
@@ -13,10 +13,16 @@ document.addEventListener("DOMContentLoaded", function () {
         return operators.includes(lastChar);
     }
 
+    // Funkcja sprawdzająca, czy wyrażenie matematyczne jest bezpieczne
+    function isExpressionSafe(expression) {
+        const lastTwoChars = expression.slice(-2);
+        return !lastTwoChars.includes("/0");
+    }
+
     // Funkcja dodająca obsługę dla przycisków numerycznych i operatorów
     buttons.forEach(function (button) {
         button.addEventListener("click", function () {
-            const buttonText = button.textContent;
+            const buttonText = button.textContent || button.dataset.value;
 
             if (buttonText === "C") {
                 // Jeśli naciśnięty przycisk to "C", czyścimy
@@ -24,10 +30,17 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (buttonText === "=") {
                 // Jeśli naciśnięty przycisk to "=", wykonujemy obliczenia
                 try {
-                    currentInput = eval(currentInput).toString();
+                    if (isExpressionSafe(currentInput)) {
+                        currentInput = eval(currentInput).toString();
+                    } else {
+                        currentInput = "Błąd";
+                    }
                 } catch (error) {
                     currentInput = "Błąd";
                 }
+            } else if (buttonText === "/" && currentInput === "") {
+                // Jeśli pierwszy przycisk to "/", traktujemy to jako 0/
+                currentInput = "0/";
             } else if (LastOperator(currentInput) && buttonText.match(/[\+\-\*\/]/)) {
                 // Jeśli ostatni znak to operator, a naciśnięty przycisk to też operator, zastępujemy go nowym
                 currentInput = currentInput.slice(0, -1) + buttonText;
