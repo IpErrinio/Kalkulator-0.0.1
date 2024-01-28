@@ -1,10 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
-
     const display = document.getElementById("display");
     const buttons = document.querySelectorAll(".number, .operator, .clear, .equal");
 
+    // Funkcja resetująca kalkulator do stanu początkowego
+    function resetCalculator() {
+        currentInput = "0";
+    }
+
     // Zmienna przechowująca
-    let currentInput = "";
+    let currentInput = "0";
 
     // Funkcja sprawdzająca, czy ostatni znak to operator
     function LastOperator(input) {
@@ -22,11 +26,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Funkcja dodająca obsługę dla przycisków numerycznych i operatorów
     buttons.forEach(function (button) {
         button.addEventListener("click", function () {
-            const buttonText = button.textContent || button.dataset.value;
+            const buttonText = button.textContent
 
             if (buttonText === "C") {
-                // Jeśli naciśnięty przycisk to "C", czyścimy
-                currentInput = "";
+                // Jeśli naciśnięty przycisk to "C", resetujemy kalkulator
+                resetCalculator();
             } else if (buttonText === "=") {
                 // Jeśli naciśnięty przycisk to "=", wykonujemy obliczenia
                 try {
@@ -46,7 +50,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentInput = currentInput.slice(0, -1) + buttonText;
             } else {
                 // W przeciwnym razie dodajemy naciśnięty przycisk do aktualnych danych
-                currentInput += buttonText;
+                if (currentInput === "0") {
+                    currentInput = buttonText;
+                } else {
+                    currentInput += buttonText;
+                }
             }
 
             // Aktualizacja widoku na ekranie
