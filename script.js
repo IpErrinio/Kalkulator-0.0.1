@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Funkcja resetująca kalkulator do stanu początkowego
     function resetCalculator() {
         currentInput = "0";
+        display.textContent = currentInput;
     }
 
     // Zmienna przechowująca
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Funkcja dodająca obsługę dla przycisków numerycznych i operatorów
     buttons.forEach(function (button) {
         button.addEventListener("click", function () {
-            const buttonText = button.textContent
+            const buttonText = button.textContent;
 
             if (buttonText === "C") {
                 // Jeśli naciśnięty przycisk to "C", resetujemy kalkulator
