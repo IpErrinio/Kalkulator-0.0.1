@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Funkcja resetująca kalkulator do stanu początkowego
     function resetCalculator() {
         currentInput = "0";
-        display.textContent = currentInput;
     }
 
     // Zmienna przechowująca
@@ -29,6 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", function () {
             const buttonText = button.textContent;
 
+            // Sprawdź, czy ostatni znak to operator
+            const lastCharIsOperator = LastOperator(currentInput);
+
             if (buttonText === "C") {
                 // Jeśli naciśnięty przycisk to "C", resetujemy kalkulator
                 resetCalculator();
@@ -43,12 +45,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 } catch (error) {
                     currentInput = "Błąd";
                 }
-            } else if (buttonText === "/" && currentInput === "") {
-                // Jeśli pierwszy przycisk to "/", traktujemy to jako 0/
-                currentInput = "0/";
-            } else if (LastOperator(currentInput) && buttonText.match(/[\+\-\*\/]/)) {
-                // Jeśli ostatni znak to operator, a naciśnięty przycisk to też operator, zastępujemy go nowym
-                currentInput = currentInput.slice(0, -1) + buttonText;
+            } else if (buttonText.match(/[+\-*/]/)) {
+                // Jeśli naciśnięty przycisk to operator
+                if (currentInput === "0" && buttonText.match(/[+\-*/]/)) {
+                    // Jeśli currentInput to "0" i naciśnięty przycisk to operator, zignoruj
+                } else if (lastCharIsOperator) {
+                    // Jeśli ostatni znak to operator, zastąp go nowym operatorem
+                    currentInput = currentInput.slice(0, -1) + buttonText;
+                } else {
+                    // W przeciwnym razie dodajemy naciśnięty przycisk do aktualnych danych
+                    currentInput += buttonText;
+                }
             } else {
                 // W przeciwnym razie dodajemy naciśnięty przycisk do aktualnych danych
                 if (currentInput === "0") {
