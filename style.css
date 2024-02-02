@@ -1,0 +1,103 @@
+@keyframes wave {
+    0%, 100% {
+      background-color: #FF0000;
+    }
+    16% {
+      background-color: #FF7F00;
+    }
+    33% {
+      background-color: #FFFF00;
+    }
+    50% {
+      background-color: #00FF00;
+    }
+    66% {
+      background-color: #0000FF;
+    }
+    83% {
+      background-color: #4B0082;
+    }
+  }
+
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.calculator {
+    animation: wave 6s linear infinite;     
+    background-size: 200% 100%;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: 300px;
+}
+
+.display {
+    background-color: #eee;
+    border: 7px solid #ccc;
+    border-radius: 7px;
+    padding: 20px;
+    margin-bottom: 10px;
+    font-size: 30px;
+    min-height: 10px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+button {
+    padding: 15px;
+    font-size: 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.operator {
+    background-color: #5cb85c;
+    color: #fff;
+    font-size: 25px;
+    position: relative;
+}
+
+.operator.star {
+    display: grid;
+    place-items: center;
+}
+
+.operator.star span {
+    margin-top: 7px;
+}
+
+.number {
+    background-color: #337ab7;
+    color: #fff;
+}
+
+.clear {
+    background-color: #ff6666;
+    color: #fff;
+}
+
+.equal {
+    background-color: #ffcc66;
+    color: #333;
+}
+
+button:hover {
+    background-color: #235273;
+}
