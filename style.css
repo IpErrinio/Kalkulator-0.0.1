@@ -21,7 +21,7 @@
 
   /* @keyframes wave2 {
     0%, 100% {
-        border-color: #FF0000;
+        : #FF0000;
     }
     16% {
         border-color: #FF7F00;
@@ -206,6 +206,8 @@ button {
 }
 
 .equal {
+    grid-column: span 4;
+    grid-row: 5;
     background-color: #7a5200;
     color: #fff;
 }
