@@ -1,14 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Pobieramy element wyświetlacza kalkulatora oraz wszystkie przyciski
     const display = document.getElementById("display");
-    const buttons = document.querySelectorAll(".number, .operator, .clear, .equal");
+    const buttons = document.querySelectorAll(".number, .operator, .clear, .equal, .dot");
+    const backspaceButton = document.querySelector(".backspace");
+
+    // Inicjalizujemy zmienne przechowujące aktualny stan kalkulatora
+    let currentInput = "0";
+    let hasDot = false; // Zmienna określająca, czy na wyświetlaczu znajduje się już kropka
 
     // Funkcja resetująca kalkulator do stanu początkowego
     function resetCalculator() {
         currentInput = "0";
+        hasDot = false;
     }
-
-    // Zmienna przechowująca
-    let currentInput = "0";
 
     // Funkcja sprawdzająca, czy ostatni znak to operator
     function LastOperator(input) {
@@ -19,45 +23,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Funkcja sprawdzająca, czy wyrażenie matematyczne jest bezpieczne
     function isExpressionSafe(expression) {
-        const lastTwoChars = expression.slice(-2);
-        return !lastTwoChars.includes("/0");
+        return !expression.includes("/0");
     }
 
-    // Funkcja dodająca obsługę dla przycisków numerycznych i operatorów
+    // Obsługa kliknięcia na każdy przycisk
     buttons.forEach(function (button) {
         button.addEventListener("click", function () {
-            const buttonText = button.textContent;
+            const buttonText = button.textContent; // Pobieramy tekst z przycisku
 
-            // Sprawdź, czy ostatni znak to operator
-            const lastCharIsOperator = LastOperator(currentInput);
+            const lastCharIsOperator = LastOperator(currentInput); // Sprawdzamy, czy ostatni znak to operator
 
+            // Obsługa przycisku "C" - resetuje kalkulator
             if (buttonText === "C") {
-                // Jeśli naciśnięty przycisk to "C", resetujemy kalkulator
                 resetCalculator();
-            } else if (buttonText === "=") {
-                // Jeśli naciśnięty przycisk to "=", wykonujemy obliczenia
-                try {
-                    if (isExpressionSafe(currentInput)) {
-                        currentInput = eval(currentInput).toString();
-                    } else {
-                        currentInput = "Błąd";
-                    }
-                } catch (error) {
-                    currentInput = "Błąd";
-                }
-            } else if (buttonText.match(/[+\-*/]/)) {
-                // Jeśli naciśnięty przycisk to operator
-                if (currentInput === "0" && buttonText.match(/[+\-*/]/)) {
-                    // Jeśli currentInput to "0" i naciśnięty przycisk to operator, zignoruj
-                } else if (lastCharIsOperator) {
-                    // Jeśli ostatni znak to operator, zastąp go nowym operatorem
-                    currentInput = currentInput.slice(0, -1) + buttonText;
+            }
+            // Obsługa przycisku "=" - wykonuje obliczenia
+            else if (buttonText === "=") {
+                // Sprawdzamy, czy po kropce jest cyfra
+                if (hasDot && currentInput.endsWith(".")) {
+                    alert("Nieprawidłowe wyrażenie matematyczne. Brak cyfry po kropce.");
                 } else {
-                    // W przeciwnym razie dodajemy naciśnięty przycisk do aktualnych danych
-                    currentInput += buttonText;
+                    try {
+                        // Wykonujemy obliczenia
+                        if (isExpressionSafe(currentInput)) {
+                            const result = eval(currentInput);
+                            currentInput = result.toString();
+                        } else {
+                            currentInput = "Error";
+                        }
+                    } catch (error) {
+                        currentInput = "Error";
+                    }
                 }
-            } else {
-                // W przeciwnym razie dodajemy naciśnięty przycisk do aktualnych danych
+            }
+            // Obsługa operatorów matematycznych
+            else if (buttonText.match(/[+\-*\/]/)) {
+                // Sprawdzamy, czy po kropce jest cyfra
+                if (currentInput === "0" && buttonText.match(/[+\-*\/]/)) {
+                } else if (lastCharIsOperator && !hasDot) {
+                    currentInput = currentInput.slice(0, -1) + buttonText;
+                } else if (hasDot && buttonText !== "." && !/\d$/.test(currentInput)) {
+                    alert("Nieprawidłowe wyrażenie matematyczne. Brak cyfry po kropce.");
+                } else {
+                    currentInput += buttonText;
+                    hasDot = false;
+                }
+            }
+            // Obsługa kropki
+            else if (buttonText === ".") {
+                if (!hasDot && /\d$/.test(currentInput)) {
+                    currentInput += buttonText;
+                    hasDot = true;
+                }
+            }
+            // Obsługa guzika cofającego
+            else if (button === backspaceButton) {
+                if (currentInput.length === 1) {
+                    currentInput = "0"; // Jeśli usuwamy ostatnią cyfrę, ustawiamy wartość domyślną na "0"
+                } else {
+                    currentInput = currentInput.slice(0, -1); // W przeciwnym razie usuwamy ostatnią cyfrę
+                }
+            }
+            // Obsługa pozostałych przycisków - cyfr
+            else {
                 if (currentInput === "0") {
                     currentInput = buttonText;
                 } else {
@@ -65,13 +93,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Aktualizacja widoku na ekranie
+            // Aktualizacja wyświetlacza
             display.textContent = currentInput;
 
-            // Jeśli naciśnięty przycisk to "=", czyścimy dane, aby rozpocząć nowe obliczenia
+            // Wykonujemy obliczenia po kliknięciu "=" | Sprawdzamy, czy po kropce jest cyfra
+            if (buttonText === "=" && (hasDot && currentInput.endsWith("."))) {
+                return;
+            }
+
             if (buttonText === "=") {
-                currentInput = "";
+                try {
+                    const result = eval(currentInput);
+                    currentInput = result.toString();
+                } catch (error) {
+                    currentInput = "Error";
+                }
             }
         });
+    });
+
+    // Obsługa zdarzenia kliknięcia na guzik cofający
+    backspaceButton.addEventListener("click", function () {
+        if (currentInput.length === 1) {
+            currentInput = "0"; // Jeśli usuwamy ostatnią cyfrę, ustawiamy wartość domyślną na "0"
+        } else {
+            currentInput = currentInput.slice(0, -1); // W przeciwnym razie usuwamy ostatnią cyfrę
+        }
+        display.textContent = currentInput;
     });
 });
