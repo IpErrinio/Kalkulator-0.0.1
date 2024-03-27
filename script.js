@@ -55,8 +55,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (buttonText === "C") {
       resetCalculator();
     } else if (buttonText === "=") {
-      // Wykonujemy obliczenia
-      if (isExpressionSafe(currentInput)) {
+      // Przypomnienie o kropce
+      if (
+        (hasDot && currentInput.endsWith(".")) ||
+        (hasDot && buttonText !== "." && !/\d$/.test(currentInput))
+      ) {
+        alert(
+          "Po chuj ci ta kropka jak nawet nie potrafisz w cyferke kliknąć po niej."
+        );
+        // Wykonujemy obliczenia
+      } else if (isExpressionSafe(currentInput)) {
         const result = eval(currentInput);
         currentInput = result.toString();
       } else {
@@ -68,10 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
       } else if (lastCharIsOperator && !hasDot) {
         // Lepsze działanie kropki
         currentInput = currentInput.slice(0, -1) + buttonText;
-      } else if (hasDot && buttonText !== "." && !/\d$/.test(currentInput)) {
-        alert(
-          "Po chuj ci ta kropka jak nawet nie potrafisz w cyferke kliknąć po niej."
-        );
       } else {
         currentInput += buttonText;
         hasDot = false;
